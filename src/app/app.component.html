@@ -1,13 +1,22 @@
 <mat-toolbar color="primary" class="app-toolbar">
   <span>{{ title }}</span>
   <span class="spacer"></span>
-  <ng-container *ngIf="!(currentUser$ | async); else loggedInLinks">
+  <ng-container *ngIf="currentUser$ | async as currentUser; else loggedOutLinks">
+    <span class="welcome-text">Welcome, {{ currentUser.displayName }}</span>
+    <a mat-button routerLink="/dashboard" class="nav-button">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <button mat-icon-button routerLink="/profile" matTooltip="Profile" class="nav-button">
+      <mat-icon>person</mat-icon>
+    </button>
+    <button mat-icon-button (click)="logout()" matTooltip="Logout" class="nav-button">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </ng-container>
+  <ng-template #loggedOutLinks>
     <a mat-button routerLink="/login">Login</a>
     <a mat-button routerLink="/signup">Sign Up</a>
-  </ng-container>
-  <ng-template #loggedInLinks>
-    <a mat-button routerLink="/dashboard">Dashboard</a>
-    <a mat-button routerLink="/profile">Profile</a>
   </ng-template>
 </mat-toolbar>
 <div class="main-content">

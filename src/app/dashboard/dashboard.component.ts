@@ -59,6 +59,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.loadMeetings();
   }
 
   loadCurrentUser(): void {
@@ -69,6 +70,21 @@ export class DashboardComponent implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  loadMeetings(): void {
+    this.isLoading = true;
+    this.meetingService.listMeetings().subscribe({
+      next: (meetings) => {
+        this.meetings = meetings;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading meetings:', error);
+        this.errorMessage = 'Failed to load meetings';
+        this.isLoading = false;
+      }
+    });
   }
 
   loadUserProfile(): void {
@@ -88,12 +104,17 @@ export class DashboardComponent implements OnInit {
       this.isCreatingMeeting = true;
       this.errorMessage = null;
       const { title, description, startDate, startTime, endDate, endTime, participants } = this.meetingForm.value;
-      const startDateTime = `${startDate}T${startTime}`;
-      const endDateTime = `${endDate}T${endTime}`;
+      
+      // Convert Date objects to ISO date strings (YYYY-MM-DD)
+      const startDateStr = this.formatDateToIso(startDate);
+      const endDateStr = this.formatDateToIso(endDate);
+      
+      const startDateTime = `${startDateStr}T${startTime}`;
+      const endDateTime = `${endDateStr}T${endTime}`;
       this.meetingService.createMeeting({ title, description, startTime: startDateTime, endTime: endDateTime, participants }).subscribe({
         next: (meeting) => {
           this.isCreatingMeeting = false;
-          this.meetings.push(meeting);
+          this.loadMeetings();
           this.meetingForm.reset();
           this.participants.clear();
           console.log('Meeting created:', meeting);
@@ -113,6 +134,16 @@ export class DashboardComponent implements OnInit {
     const month = pad(date.getMonth() + 1);
     const day = pad(date.getDate());
     return `${year}-${month}-${day}`;
+  }
+
+  formatDateToIso(date: any): string {
+    if (!date) return '';
+    // If it's a Date object, convert to ISO string
+    if (date instanceof Date) {
+      return this.getLocalDateString(date);
+    }
+    // If it's already a string, return as-is
+    return date.toString();
   }
 
   viewMeeting(meetingId: string): void {

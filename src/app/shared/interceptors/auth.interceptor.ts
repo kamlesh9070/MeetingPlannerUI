@@ -15,14 +15,21 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const authToken = this.authService.getAuthToken();
 
-    if (authToken && !request.headers.has('X-Auth-Token')) {
-      request = request.clone({
-        setHeaders: {
-          'X-Auth-Token': authToken
-        }
-      });
-    } else if (!authToken && request.url.includes('/api/')) {
-      console.warn('No auth token available for API request:', request.url);
+    // Only attach the auth token for API calls. Avoid adding custom headers
+    // to requests for static assets (e.g. /uploads/) which can trigger
+    // CORS preflight or be rejected by the server.
+    const isApiRequest = request.url.includes('/api/');
+
+    if (isApiRequest) {
+      if (authToken && !request.headers.has('X-Auth-Token')) {
+        request = request.clone({
+          setHeaders: {
+            'X-Auth-Token': authToken
+          }
+        });
+      } else if (!authToken) {
+        console.warn('No auth token available for API request:', request.url);
+      }
     }
 
     return next.handle(request);
