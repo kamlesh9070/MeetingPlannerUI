@@ -1,0 +1,86 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-right: 16px;
+  color: white;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.error-message {
+  background-color: #ffebee;
+  border-left: 4px solid #f44336;
+  color: #c62828;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.create-meeting-card {
+  margin-bottom: 24px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.full-width:last-of-type {
+  margin-bottom: 16px;
+}
+
+.create-meeting-card button {
+  width: 100%;
+}
+
+.meetings-list-card {
+  margin-bottom: 24px;
+}
+
+.no-meetings {
+  text-align: center;
+  padding: 32px 16px;
+  color: #999;
+}
+
+mat-table {
+  width: 100%;
+}
+
+mat-header-cell,
+mat-cell {
+  padding: 8px;
+}
+
+mat-header-cell {
+  font-weight: 600;
+  background-color: #f5f5f5;
+}
+
+mat-row:hover {
+  background-color: #fafafa;
+}
