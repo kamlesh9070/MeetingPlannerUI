@@ -89,5 +89,8 @@
       }
     }
   },
-  "defaultProject": "meeting-planner-ui"
+  "defaultProject": "meeting-planner-ui",
+  "cli": {
+    "analytics": "bb4a63d2-a1b4-4c27-8542-9fa8ea454392"
+  }
 }
