@@ -1,8 +1,14 @@
 <mat-toolbar color="primary" class="app-toolbar">
   <span>{{ title }}</span>
   <span class="spacer"></span>
-  <a mat-button routerLink="/login">Login</a>
-  <a mat-button routerLink="/signup">Sign Up</a>
+  <ng-container *ngIf="!(currentUser$ | async); else loggedInLinks">
+    <a mat-button routerLink="/login">Login</a>
+    <a mat-button routerLink="/signup">Sign Up</a>
+  </ng-container>
+  <ng-template #loggedInLinks>
+    <a mat-button routerLink="/dashboard">Dashboard</a>
+    <a mat-button routerLink="/profile">Profile</a>
+  </ng-template>
 </mat-toolbar>
 <div class="main-content">
   <router-outlet></router-outlet>

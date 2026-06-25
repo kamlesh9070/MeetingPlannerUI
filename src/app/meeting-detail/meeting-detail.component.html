@@ -48,15 +48,15 @@
       </section>
 
       <section class="detail-section">
-        <h3>Participants ({{ meeting.participants.length }})</h3>
-        <mat-list *ngIf="meeting.participants.length > 0">
+        <h3>Participants ({{ meeting.participants?.length || 0 }})</h3>
+        <mat-list *ngIf="meeting.participants?.length">
           <mat-list-item *ngFor="let participant of meeting.participants">
             <mat-icon matListItemIcon>person</mat-icon>
             <div matListItemTitle>{{ participant.name }}</div>
             <div matListItemLine>{{ participant.email }}</div>
           </mat-list-item>
         </mat-list>
-        <p *ngIf="meeting.participants.length === 0" class="empty-text">
+        <p *ngIf="!meeting.participants?.length" class="empty-text">
           No participants added to this meeting.
         </p>
       </section>

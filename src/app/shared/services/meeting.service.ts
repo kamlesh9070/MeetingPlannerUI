@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { MeetingRequest, MeetingResponse } from '../models/index';
 import { AuthService } from './auth.service';
+import { toApiDateTime } from '../utils/datetime.util';
 
 @Injectable({
   providedIn: 'root'
@@ -17,32 +18,48 @@ export class MeetingService {
     private authService: AuthService
   ) {}
 
-  createMeeting(request: MeetingRequest): Observable<MeetingResponse> {
+  private getAuthHeaders(): { [header: string]: string } | undefined {
     const authToken = this.authService.getAuthToken();
-    return this.http.post<MeetingResponse>(this.apiUrl, request, {
-      headers: { 'X-Auth-Token': authToken || '' }
+    return authToken ? { 'X-Auth-Token': authToken } : undefined;
+  }
+
+  createMeeting(request: MeetingRequest): Observable<MeetingResponse> {
+    const payload: MeetingRequest = {
+      ...request,
+      startTime: toApiDateTime(request.startTime),
+      endTime: toApiDateTime(request.endTime)
+    };
+    return this.http.post<MeetingResponse>(this.apiUrl, payload, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  listMeetings(): Observable<MeetingResponse[]> {
+    return this.http.get<MeetingResponse[]>(this.apiUrl, {
+      headers: this.getAuthHeaders()
     }).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
   getMeeting(meetingId: string): Observable<MeetingResponse> {
-    const authToken = this.authService.getAuthToken();
     return this.http.get<MeetingResponse>(`${this.apiUrl}/${meetingId}`, {
-      headers: { 'X-Auth-Token': authToken || '' }
+      headers: this.getAuthHeaders()
     }).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An error occurred';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = error.error?.message || error.statusText || errorMessage;
+    console.error('HTTP error', error);
+    const status = error.status;
+    let serverMsg = error.error?.error || error.error?.message || error.error || error.statusText;
+    if (typeof serverMsg === 'object') {
+      serverMsg = JSON.stringify(serverMsg);
     }
-    console.error(errorMessage);
+    const errorMessage = `HTTP ${status} - ${serverMsg}`;
     return throwError(() => new Error(errorMessage));
   }
 }

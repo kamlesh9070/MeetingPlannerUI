@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { LoginRequest, SignupRequest, UserDto } from '../models/index';
+import { resolveAssetUrl } from '../utils/url.util';
 
 @Injectable({
   providedIn: 'root'
@@ -40,34 +41,44 @@ export class AuthService {
   }
 
   updateUser(user: UserDto): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    localStorage.setItem('authToken', user.authToken);
-    this.currentUserSubject.next(user);
+    const normalized = this.normalizeUser(user);
+    localStorage.setItem('currentUser', JSON.stringify(normalized));
+    localStorage.setItem('authToken', normalized.authToken);
+    this.currentUserSubject.next(normalized);
   }
 
   getAuthToken(): string | null {
-    return localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
+    return token && token !== 'null' && token !== 'undefined' ? token : null;
   }
 
   private handleUserResponse(user: UserDto): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    localStorage.setItem('authToken', user.authToken);
-    this.currentUserSubject.next(user);
+    const normalized = this.normalizeUser(user);
+    localStorage.setItem('currentUser', JSON.stringify(normalized));
+    localStorage.setItem('authToken', normalized.authToken);
+    this.currentUserSubject.next(normalized);
   }
 
   private loadUserFromStorage(): UserDto | null {
     const user = localStorage.getItem('currentUser');
-    return user ? JSON.parse(user) : null;
+    return user ? this.normalizeUser(JSON.parse(user)) : null;
+  }
+
+  private normalizeUser(user: UserDto): UserDto {
+    return {
+      ...user,
+      avatarUrl: resolveAssetUrl(user.avatarUrl) ?? undefined
+    };
   }
 
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An error occurred';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      errorMessage = error.error?.message || error.statusText || errorMessage;
+    console.error('HTTP error', error);
+    const status = error.status;
+    let serverMsg = error.error?.error || error.error?.message || error.error || error.statusText;
+    if (typeof serverMsg === 'object') {
+      serverMsg = JSON.stringify(serverMsg);
     }
-    console.error(errorMessage);
+    const errorMessage = `HTTP ${status} - ${serverMsg}`;
     return throwError(() => new Error(errorMessage));
   }
 }

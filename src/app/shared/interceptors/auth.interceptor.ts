@@ -14,13 +14,15 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const authToken = this.authService.getAuthToken();
-    
+
     if (authToken && !request.headers.has('X-Auth-Token')) {
       request = request.clone({
         setHeaders: {
           'X-Auth-Token': authToken
         }
       });
+    } else if (!authToken && request.url.includes('/api/')) {
+      console.warn('No auth token available for API request:', request.url);
     }
 
     return next.handle(request);

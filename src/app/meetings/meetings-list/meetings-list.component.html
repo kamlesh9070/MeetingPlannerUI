@@ -1,0 +1,22 @@
+<div class="meetings-list">
+  <mat-card>
+    <mat-card-title>Meetings</mat-card-title>
+    <mat-card-content>
+      <div class="actions">
+        <button mat-raised-button color="primary" routerLink="/meetings/create">Create Meeting</button>
+      </div>
+
+      <div *ngIf="isLoading">Loading...</div>
+      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+      <mat-list *ngIf="!isLoading && meetings.length > 0">
+        <mat-list-item *ngFor="let m of meetings" (click)="view(m)" class="meeting-item">
+          <h4 matLine>{{ m.title }}</h4>
+          <p matLine>{{ m.startTime | date: 'short' }} — {{ m.endTime | date: 'short' }}</p>
+        </mat-list-item>
+      </mat-list>
+
+      <div *ngIf="!isLoading && meetings.length === 0" class="empty">No meetings yet.</div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -53,8 +53,63 @@
   margin-bottom: 16px;
 }
 
-.create-meeting-card button {
+.create-meeting-card .submit-btn {
   width: 100%;
+  margin-top: 16px;
+}
+
+.date-time-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.date-field,
+.time-field {
+  flex: 1 1 240px;
+}
+
+.participants-section {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.participants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #424242;
+  }
+}
+
+.participants-hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #757575;
+}
+
+.participant-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+
+  mat-form-field {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 8px;
+  }
 }
 
 .meetings-list-card {

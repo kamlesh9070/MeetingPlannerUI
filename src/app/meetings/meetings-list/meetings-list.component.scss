@@ -1,0 +1,17 @@
+.meetings-list {
+  max-width: 800px;
+  margin: 24px auto;
+}
+.meeting-item {
+  cursor: pointer;
+}
+.actions {
+  margin-bottom: 12px;
+}
+.empty {
+  color: #777;
+  padding: 24px 0;
+}
+.error {
+  color: #c62828;
+}

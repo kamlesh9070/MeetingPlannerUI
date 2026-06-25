@@ -1,0 +1,28 @@
+.create-meeting {
+  max-width: 720px;
+  margin: 24px auto;
+}
+.full-width {
+  width: 100%;
+}
+.participants {
+  margin-top: 16px;
+}
+.participant-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.participant-actions {
+  margin-top: 8px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.error {
+  color: #c62828;
+  margin-top: 12px;
+}

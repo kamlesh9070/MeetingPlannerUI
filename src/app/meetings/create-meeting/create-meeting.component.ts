@@ -1,0 +1,84 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MeetingService } from '../../shared/services/meeting.service';
+import { MeetingRequest, ParticipantDto } from '../../shared/models/index';
+
+@Component({
+  selector: 'app-create-meeting',
+  templateUrl: './create-meeting.component.html',
+  styleUrls: ['./create-meeting.component.scss']
+})
+export class CreateMeetingComponent {
+  form: FormGroup;
+  isSubmitting = false;
+  errorMessage: string | null = null;
+
+  constructor(
+    private fb: FormBuilder,
+    private meetingService: MeetingService,
+    private router: Router
+  ) {
+    this.form = this.fb.group({
+      title: ['', Validators.required],
+      startDateTime: ['', Validators.required],
+      durationMinutes: [60, [Validators.required, Validators.min(5)]],
+      location: [''],
+      description: [''],
+      participants: this.fb.array([])
+    });
+  }
+
+  get participants(): FormArray {
+    return this.form.get('participants') as FormArray;
+  }
+
+  addParticipant(email = '') {
+    const p: ParticipantDto = { name: '', email };
+    this.participants.push(this.fb.control(p));
+  }
+
+  removeParticipant(index: number) {
+    this.participants.removeAt(index);
+  }
+
+  private toLocalDateTimeString(date: Date): string {
+    const pad = (value: number) => value.toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  submit() {
+    if (this.form.invalid) return;
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
+    const startTime = this.form.value.startDateTime;
+    const start = new Date(startTime);
+    const end = new Date(start.getTime() + (this.form.value.durationMinutes * 60000));
+
+    const request: MeetingRequest = {
+      title: this.form.value.title,
+      description: this.form.value.description,
+      startTime: startTime,
+      endTime: this.toLocalDateTimeString(end),
+      location: this.form.value.location,
+      participants: this.participants.value as ParticipantDto[]
+    };
+
+    this.meetingService.createMeeting(request).subscribe({
+      next: (m) => {
+        this.isSubmitting = false;
+        this.router.navigate(['/meetings']);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = err.message || 'Failed to create meeting';
+      }
+    });
+  }
+}

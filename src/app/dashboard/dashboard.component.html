@@ -43,23 +43,96 @@
             <textarea matInput formControlName="description" [disabled]="isCreatingMeeting" rows="3"></textarea>
           </mat-form-field>
 
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Start Time</mat-label>
-            <input matInput type="datetime-local" formControlName="startTime" [disabled]="isCreatingMeeting" />
-            <mat-error *ngIf="meetingForm.get('startTime')?.hasError('required')">
-              Start time is required
-            </mat-error>
-          </mat-form-field>
+          <div class="date-time-row">
+            <mat-form-field appearance="fill" class="date-field">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" [disabled]="isCreatingMeeting" />
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+              <mat-error *ngIf="meetingForm.get('startDate')?.hasError('required')">
+                Start date is required
+              </mat-error>
+            </mat-form-field>
 
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>End Time</mat-label>
-            <input matInput type="datetime-local" formControlName="endTime" [disabled]="isCreatingMeeting" />
-            <mat-error *ngIf="meetingForm.get('endTime')?.hasError('required')">
-              End time is required
-            </mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="fill" class="time-field">
+              <mat-label>Start Time</mat-label>
+              <input matInput type="time" formControlName="startTime" [disabled]="isCreatingMeeting" />
+              <mat-error *ngIf="meetingForm.get('startTime')?.hasError('required')">
+                Start time is required
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-          <button mat-raised-button color="primary" type="submit" [disabled]="meetingForm.invalid || isCreatingMeeting">
+          <div class="date-time-row">
+            <mat-form-field appearance="fill" class="date-field">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" [disabled]="isCreatingMeeting" />
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+              <mat-error *ngIf="meetingForm.get('endDate')?.hasError('required')">
+                End date is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="time-field">
+              <mat-label>End Time</mat-label>
+              <input matInput type="time" formControlName="endTime" [disabled]="isCreatingMeeting" />
+              <mat-error *ngIf="meetingForm.get('endTime')?.hasError('required')">
+                End time is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="participants-section" formArrayName="participants">
+            <div class="participants-header">
+              <h3>Participants</h3>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="addParticipant()"
+                [disabled]="isCreatingMeeting"
+              >
+                <mat-icon>person_add</mat-icon>
+                Add Participant
+              </button>
+            </div>
+
+            <p *ngIf="participants.length === 0" class="participants-hint">
+              Optional — add people invited to this meeting.
+            </p>
+
+            <div
+              *ngFor="let participant of participants.controls; let i = index"
+              [formGroupName]="i"
+              class="participant-row"
+            >
+              <mat-form-field appearance="fill">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="name" [disabled]="isCreatingMeeting" />
+                <mat-error *ngIf="participant.get('name')?.hasError('required')">Required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" [disabled]="isCreatingMeeting" />
+                <mat-error *ngIf="participant.get('email')?.hasError('required')">Required</mat-error>
+                <mat-error *ngIf="participant.get('email')?.hasError('email')">Invalid email</mat-error>
+              </mat-form-field>
+
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                (click)="removeParticipant(i)"
+                [disabled]="isCreatingMeeting"
+                matTooltip="Remove participant"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="meetingForm.invalid || isCreatingMeeting">
             <span *ngIf="!isCreatingMeeting">Create Meeting</span>
             <span *ngIf="isCreatingMeeting">Creating...</span>
           </button>
@@ -90,6 +163,12 @@
           <ng-container matColumnDef="endTime">
             <mat-header-cell *matHeaderCellDef>End Time</mat-header-cell>
             <mat-cell *matCellDef="let meeting">{{ meeting.endTime | date: 'short' }}</mat-cell>
+          </ng-container>
+
+          <!-- Participants Column -->
+          <ng-container matColumnDef="participants">
+            <mat-header-cell *matHeaderCellDef>Participants</mat-header-cell>
+            <mat-cell *matCellDef="let meeting">{{ meeting.participants?.length || 0 }}</mat-cell>
           </ng-container>
 
           <!-- Organizer Column -->

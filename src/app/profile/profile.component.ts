@@ -68,6 +68,11 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    if (!this.authService.getAuthToken()) {
+      this.errorMessage = 'You must be logged in to upload an avatar.';
+      return;
+    }
+
     this.isUploading = true;
     this.errorMessage = null;
     this.successMessage = null;

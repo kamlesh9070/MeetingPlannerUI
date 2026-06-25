@@ -11,6 +11,8 @@ import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MeetingDetailComponent } from './meeting-detail/meeting-detail.component';
+import { MeetingsListComponent } from './meetings/meetings-list/meetings-list.component';
+import { CreateMeetingComponent } from './meetings/create-meeting/create-meeting.component';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
@@ -20,7 +22,9 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     SignupComponent,
     DashboardComponent,
     ProfileComponent,
-    MeetingDetailComponent
+    MeetingDetailComponent,
+    MeetingsListComponent,
+    CreateMeetingComponent
   ],
   imports: [
     BrowserModule,
