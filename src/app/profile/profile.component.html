@@ -1,0 +1,99 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-title>My Profile</mat-card-title>
+    
+    <mat-card-content *ngIf="!isLoading">
+      <!-- Success/Error Messages -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <div class="avatar-preview">
+          <img 
+            *ngIf="avatarPreview" 
+            [src]="avatarPreview" 
+            alt="Avatar"
+            class="avatar-image"
+          />
+          <mat-icon *ngIf="!avatarPreview" class="default-avatar">account_circle</mat-icon>
+        </div>
+
+        <div class="avatar-upload">
+          <div class="file-input-wrapper">
+            <input
+              #fileInput
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="file-input"
+              [disabled]="isUploading"
+            />
+            <button
+              mat-raised-button
+              color="accent"
+              type="button"
+              (click)="fileInput.click()"
+              [disabled]="isUploading"
+            >
+              <mat-icon>upload</mat-icon>
+              Choose Image
+            </button>
+          </div>
+
+          <div *ngIf="selectedFile" class="selected-file">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ selectedFile.name }}</span>
+          </div>
+
+          <div class="upload-actions" *ngIf="selectedFile">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="uploadAvatar()"
+              [disabled]="isUploading"
+            >
+              <span *ngIf="!isUploading">Upload Avatar</span>
+              <span *ngIf="isUploading">Uploading...</span>
+            </button>
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="removeAvatar()"
+              [disabled]="isUploading"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Form -->
+      <form [formGroup]="profileForm" class="profile-form">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" readonly />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" readonly />
+        </mat-form-field>
+
+        <div class="info-text">
+          <mat-icon>info</mat-icon>
+          <span>Your profile information is read-only. Contact support to update your details.</span>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-content *ngIf="isLoading" class="loading">
+      <mat-spinner></mat-spinner>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -39,6 +39,12 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
+  updateUser(user: UserDto): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('authToken', user.authToken);
+    this.currentUserSubject.next(user);
+  }
+
   getAuthToken(): string | null {
     return localStorage.getItem('authToken');
   }

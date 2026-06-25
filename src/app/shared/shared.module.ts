@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDividerModule,
     MatMenuModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     CommonModule,
@@ -44,7 +46,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDividerModule,
     MatMenuModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule
   ]
 })
 export class SharedModule {}

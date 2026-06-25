@@ -9,10 +9,11 @@ import { SharedModule } from './shared/shared.module';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProfileComponent } from './profile/profile.component';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, SignupComponent, DashboardComponent],
+  declarations: [AppComponent, LoginComponent, SignupComponent, DashboardComponent, ProfileComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
