@@ -1,0 +1,65 @@
+<div class="meeting-detail-container">
+  <div class="page-header">
+    <button mat-stroked-button type="button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <mat-card *ngIf="!isLoading && meeting" class="meeting-card">
+    <mat-card-header>
+      <mat-card-title>{{ meeting.title }}</mat-card-title>
+      <mat-card-subtitle>Organized by {{ meeting.organizerName }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <section class="detail-section">
+        <h3>Schedule</h3>
+        <div class="detail-row">
+          <mat-icon>event</mat-icon>
+          <div>
+            <span class="detail-label">Start</span>
+            <span>{{ meeting.startTime | date: 'full' }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <span class="detail-label">End</span>
+            <span>{{ meeting.endTime | date: 'full' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-section">
+        <h3>Description</h3>
+        <p *ngIf="meeting.description; else noDescription">{{ meeting.description }}</p>
+        <ng-template #noDescription>
+          <p class="empty-text">No description provided.</p>
+        </ng-template>
+      </section>
+
+      <section class="detail-section">
+        <h3>Participants ({{ meeting.participants.length }})</h3>
+        <mat-list *ngIf="meeting.participants.length > 0">
+          <mat-list-item *ngFor="let participant of meeting.participants">
+            <mat-icon matListItemIcon>person</mat-icon>
+            <div matListItemTitle>{{ participant.name }}</div>
+            <div matListItemLine>{{ participant.email }}</div>
+          </mat-list-item>
+        </mat-list>
+        <p *ngIf="meeting.participants.length === 0" class="empty-text">
+          No participants added to this meeting.
+        </p>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</div>

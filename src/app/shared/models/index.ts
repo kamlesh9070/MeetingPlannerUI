@@ -20,8 +20,10 @@ export interface UserDto {
 }
 
 export interface ParticipantDto {
+  id?: string;
   name: string;
   email: string;
+  status?: 'invited' | 'accepted' | 'declined';
 }
 
 export interface MeetingRequest {
@@ -29,6 +31,7 @@ export interface MeetingRequest {
   description?: string;
   startTime: string;
   endTime: string;
+  location?: string;
   participants?: ParticipantDto[];
 }
 
@@ -38,7 +41,24 @@ export interface MeetingResponse {
   description?: string;
   startTime: string;
   endTime: string;
+  location?: string;
   organizerId: string;
   organizerName: string;
+  organizerEmail?: string;
+  organizerAvatar?: string;
   participants: ParticipantDto[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Meeting {
+  id: string;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  organizer: UserDto;
+  participants: ParticipantDto[];
+  createdAt: string;
 }

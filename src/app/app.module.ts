@@ -10,10 +10,18 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
+import { MeetingDetailComponent } from './meeting-detail/meeting-detail.component';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, SignupComponent, DashboardComponent, ProfileComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    SignupComponent,
+    DashboardComponent,
+    ProfileComponent,
+    MeetingDetailComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
