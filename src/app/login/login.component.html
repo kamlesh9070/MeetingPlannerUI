@@ -2,19 +2,32 @@
   <mat-card>
     <mat-card-title>Login</mat-card-title>
     <mat-card-content>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
       <form [formGroup]="loginForm" (ngSubmit)="submit()">
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" />
+          <input matInput type="email" formControlName="email" [disabled]="isLoading" />
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+            Please enter a valid email
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <input matInput type="password" formControlName="password" [disabled]="isLoading" />
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-          Sign In
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Sign In</span>
+          <span *ngIf="isLoading">Signing In...</span>
         </button>
       </form>
     </mat-card-content>
