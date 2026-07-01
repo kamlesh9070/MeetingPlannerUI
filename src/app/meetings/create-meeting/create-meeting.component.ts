@@ -77,8 +77,17 @@ export class CreateMeetingComponent {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err.message || 'Failed to create meeting';
+        this.errorMessage = this.formatApiError(err) || 'Failed to create meeting';
       }
     });
+  }
+
+  private formatApiError(err: any): string {
+    if (!err) return '';
+    if (err.details && typeof err.details === 'object') {
+      const parts = Object.entries(err.details).map(([k, v]) => `${k}: ${v}`);
+      return `${err.message} — ${parts.join('; ')}`;
+    }
+    return err.message || String(err);
   }
 }

@@ -36,12 +36,21 @@ export class SignupComponent {
           console.log('Signup successful', user);
           this.router.navigate(['/dashboard']);
         },
-        error: (error) => {
+        error: (err) => {
           this.isLoading = false;
-          this.errorMessage = error.message || 'Signup failed. Please try again.';
-          console.error('Signup error', error);
+          this.errorMessage = this.formatApiError(err) || 'Signup failed';
+          console.error('Signup error', err);
         }
       });
     }
+  }
+
+  private formatApiError(err: any): string {
+    if (!err) return '';
+    if (err.details && typeof err.details === 'object') {
+      const parts = Object.entries(err.details).map(([k, v]) => `${k}: ${v}`);
+      return `${err.message} — ${parts.join('; ')}`;
+    }
+    return err.message || String(err);
   }
 }

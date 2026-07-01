@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { LoginRequest, SignupRequest, UserDto } from '../models/index';
 import { resolveAssetUrl } from '../utils/url.util';
+import { ApiErrorService } from './api-error.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<UserDto | null>(this.loadUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private apiError: ApiErrorService) {}
 
   get currentUser(): UserDto | null {
     return this.currentUserSubject.value;
@@ -23,14 +24,14 @@ export class AuthService {
   signup(request: SignupRequest): Observable<UserDto> {
     return this.http.post<UserDto>(`${this.apiUrl}/signup`, request).pipe(
       tap(user => this.handleUserResponse(user)),
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
   login(request: LoginRequest): Observable<UserDto> {
     return this.http.post<UserDto>(`${this.apiUrl}/login`, request).pipe(
       tap(user => this.handleUserResponse(user)),
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
@@ -71,14 +72,5 @@ export class AuthService {
     };
   }
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('HTTP error', error);
-    const status = error.status;
-    let serverMsg = error.error?.error || error.error?.message || error.error || error.statusText;
-    if (typeof serverMsg === 'object') {
-      serverMsg = JSON.stringify(serverMsg);
-    }
-    const errorMessage = `HTTP ${status} - ${serverMsg}`;
-    return throwError(() => new Error(errorMessage));
-  }
+  // errors are handled centrally via ApiErrorService
 }

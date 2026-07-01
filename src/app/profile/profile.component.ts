@@ -92,7 +92,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (error) => {
         this.isUploading = false;
-        this.errorMessage = error.message || 'Failed to upload avatar';
+        this.errorMessage = this.formatApiError(error) || 'Failed to upload avatar';
       }
     });
   }
@@ -100,5 +100,14 @@ export class ProfileComponent implements OnInit {
   removeAvatar(): void {
     this.avatarPreview = null;
     this.selectedFile = null;
+  }
+
+  private formatApiError(err: any): string {
+    if (!err) return '';
+    if (err.details && typeof err.details === 'object') {
+      const parts = Object.entries(err.details).map(([k, v]) => `${k}: ${v}`);
+      return `${err.message} — ${parts.join('; ')}`;
+    }
+    return err.message || String(err);
   }
 }

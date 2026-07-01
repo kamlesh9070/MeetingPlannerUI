@@ -27,7 +27,7 @@ export class MeetingsListComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.message || 'Failed to load meetings';
+        this.errorMessage = this.formatApiError(err) || 'Failed to load meetings';
         this.isLoading = false;
       }
     });
@@ -35,5 +35,14 @@ export class MeetingsListComponent implements OnInit {
 
   view(meeting: MeetingResponse) {
     this.router.navigate(['/meetings', meeting.id]);
+  }
+
+  private formatApiError(err: any): string {
+    if (!err) return '';
+    if (err.details && typeof err.details === 'object') {
+      const parts = Object.entries(err.details).map(([k, v]) => `${k}: ${v}`);
+      return `${err.message} — ${parts.join('; ')}`;
+    }
+    return err.message || String(err);
   }
 }

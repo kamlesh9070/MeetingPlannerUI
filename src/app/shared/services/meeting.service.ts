@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { MeetingRequest, MeetingResponse } from '../models/index';
 import { AuthService } from './auth.service';
 import { toApiDateTime } from '../utils/datetime.util';
+import { ApiErrorService } from './api-error.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class MeetingService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private apiError: ApiErrorService
   ) {}
 
   private getAuthHeaders(): { [header: string]: string } | undefined {
@@ -32,7 +34,7 @@ export class MeetingService {
     return this.http.post<MeetingResponse>(this.apiUrl, payload, {
       headers: this.getAuthHeaders()
     }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
@@ -40,7 +42,7 @@ export class MeetingService {
     return this.http.get<MeetingResponse[]>(this.apiUrl, {
       headers: this.getAuthHeaders()
     }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
@@ -48,18 +50,8 @@ export class MeetingService {
     return this.http.get<MeetingResponse>(`${this.apiUrl}/${meetingId}`, {
       headers: this.getAuthHeaders()
     }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('HTTP error', error);
-    const status = error.status;
-    let serverMsg = error.error?.error || error.error?.message || error.error || error.statusText;
-    if (typeof serverMsg === 'object') {
-      serverMsg = JSON.stringify(serverMsg);
-    }
-    const errorMessage = `HTTP ${status} - ${serverMsg}`;
-    return throwError(() => new Error(errorMessage));
-  }
 }

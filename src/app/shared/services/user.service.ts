@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserDto } from '../models/index';
 import { AuthService } from './auth.service';
+import { ApiErrorService } from './api-error.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private apiError: ApiErrorService
   ) {}
 
   private getAuthHeaders(): { [header: string]: string } | undefined {
@@ -26,7 +28,7 @@ export class UserService {
     return this.http.get<UserDto>(`${this.apiUrl}/me`, {
       headers: this.getAuthHeaders()
     }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
@@ -37,18 +39,8 @@ export class UserService {
     return this.http.post<UserDto>(`${this.apiUrl}/me/avatar`, formData, {
       headers: this.getAuthHeaders()
     }).pipe(
-      catchError(error => this.handleError(error))
+      catchError(error => this.apiError.parseAndThrow(error))
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('HTTP error', error);
-    const status = error.status;
-    let serverMsg = error.error?.error || error.error?.message || error.error || error.statusText;
-    if (typeof serverMsg === 'object') {
-      serverMsg = JSON.stringify(serverMsg);
-    }
-    const errorMessage = `HTTP ${status} - ${serverMsg}`;
-    return throwError(() => new Error(errorMessage));
-  }
 }

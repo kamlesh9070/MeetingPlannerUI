@@ -36,10 +36,19 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.message || 'Login failed. Please try again.';
+          this.errorMessage = this.formatApiError(error) || 'Login failed. Please try again.';
           console.error('Login error', error);
         }
       });
     }
+  }
+
+  private formatApiError(err: any): string {
+    if (!err) return '';
+    if (err.details && typeof err.details === 'object') {
+      const parts = Object.entries(err.details).map(([k, v]) => `${k}: ${v}`);
+      return `${err.message} — ${parts.join('; ')}`;
+    }
+    return err.message || String(err);
   }
 }
