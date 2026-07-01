@@ -14,6 +14,8 @@ import { MeetingDetailComponent } from './meeting-detail/meeting-detail.componen
 import { MeetingsListComponent } from './meetings/meetings-list/meetings-list.component';
 import { CreateMeetingComponent } from './meetings/create-meeting/create-meeting.component';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     ProfileComponent,
     MeetingDetailComponent,
     MeetingsListComponent,
-    CreateMeetingComponent
+    CreateMeetingComponent,
+    ToastComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +37,8 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     SharedModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

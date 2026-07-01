@@ -1,0 +1,8 @@
+<div class="toast-container" aria-live="polite" aria-atomic="true">
+  <div *ngFor="let m of (messages$ | async)" class="toast" [ngClass]="m.type">
+    <div class="toast-body">
+      <span>{{ m.text }}</span>
+      <button class="close" (click)="dismiss(m.id)">✕</button>
+    </div>
+  </div>
+</div>

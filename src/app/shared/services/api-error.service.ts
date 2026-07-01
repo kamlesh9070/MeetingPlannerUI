@@ -13,7 +13,7 @@ export interface ParsedApiError {
   providedIn: 'root'
 })
 export class ApiErrorService {
-  parseAndThrow(error: HttpErrorResponse) {
+  parse(error: HttpErrorResponse): ParsedApiError {
     let parsed: ParsedApiError = {
       status: error.status || 0,
       message: error.message || 'Unknown error'
@@ -27,9 +27,12 @@ export class ApiErrorService {
         if (body.details) parsed.details = body.details;
       }
     } catch (e) {
-      // fall back to generic message
+      // ignore
     }
+    return parsed;
+  }
 
-    return throwError(() => parsed);
+  parseAndThrow(error: HttpErrorResponse) {
+    return throwError(() => this.parse(error));
   }
 }

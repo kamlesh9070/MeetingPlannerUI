@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MeetingService } from '../../shared/services/meeting.service';
 import { MeetingRequest, ParticipantDto } from '../../shared/models/index';
+import { ValidationMapperService } from '../../shared/services/validation-mapper.service';
 
 @Component({
   selector: 'app-create-meeting',
@@ -17,7 +18,8 @@ export class CreateMeetingComponent {
   constructor(
     private fb: FormBuilder,
     private meetingService: MeetingService,
-    private router: Router
+    private router: Router,
+    private validationMapper: ValidationMapperService
   ) {
     this.form = this.fb.group({
       title: ['', Validators.required],
@@ -77,7 +79,23 @@ export class CreateMeetingComponent {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = this.formatApiError(err) || 'Failed to create meeting';
+        // map backend error codes to friendly messages
+        const mapped = this.validationMapper.getMessage(err?.errorCode);
+        if (mapped) {
+          this.errorMessage = mapped;
+        } else if (err?.details && typeof err.details === 'object') {
+          // set form field errors where possible
+          Object.entries(err.details).forEach(([field, msg]) => {
+            // support field names like 'title' or 'participants[0].email'
+            const control = this.form.get(field.replace(/\[(\d+)\]/g, '.$1'));
+            if (control) {
+              control.setErrors({ server: msg });
+            }
+          });
+          this.errorMessage = err.message || 'Failed to create meeting';
+        } else {
+          this.errorMessage = this.formatApiError(err) || 'Failed to create meeting';
+        }
       }
     });
   }

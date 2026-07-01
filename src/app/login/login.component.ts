@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
+import { ValidationMapperService } from '../shared/services/validation-mapper.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private validationMapper: ValidationMapperService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -36,7 +38,8 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = this.formatApiError(error) || 'Login failed. Please try again.';
+          const mapped = this.validationMapper.getMessage(error?.errorCode);
+          this.errorMessage = mapped || this.formatApiError(error) || 'Login failed. Please try again.';
           console.error('Login error', error);
         }
       });

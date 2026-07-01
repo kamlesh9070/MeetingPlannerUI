@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../shared/services/auth.service';
+import { ValidationMapperService } from '../shared/services/validation-mapper.service';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +17,8 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private validationMapper: ValidationMapperService
   ) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
@@ -38,7 +40,8 @@ export class SignupComponent {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = this.formatApiError(err) || 'Signup failed';
+          const mapped = this.validationMapper.getMessage(err?.errorCode);
+          this.errorMessage = mapped || this.formatApiError(err) || 'Signup failed';
           console.error('Signup error', err);
         }
       });
